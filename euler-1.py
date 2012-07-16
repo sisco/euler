@@ -72,6 +72,82 @@ def prob11():
             if product > max:
                 max = product
     return max 
+    
+def prob14brute():
+    #Simply finds the length of each chain via brute force, only keeping track of the longest one.
+    max_chain = 10
+    max_num = 13
+    for i in xrange(1, 1000000):
+        curr = collatz(i)
+        if curr > max_chain:
+            max_chain = curr
+            max_num = i
+    return max_num
+    
+def prob14():
+    #Stores the length of each chain to avoid recalculating the length of subchains.
+    max_chain = 10
+    max_num = 13
+    chains = {13:10}
+    print chains
+    for i in range(1, 1000000):
+        count = 1
+        n = i
+        while n != 1:
+            if n in chains:
+                count += chains[n]
+                n = 1
+                chains[i] = count
+            elif n % 2 == 0:
+                n = n/2
+                count += 1
+            else:
+                n = 3 * n + 1
+                count += 1
+        chains[i] = count    
+        if count > max_chain:
+            max_chain = count
+            max_num = i
+            
+    return max_num
+
+def collatz(n):
+    #Return the number of terms in the Collatz chain from the given number to 1.
+    count = 1
+    while n != 1:
+        if n % 2 == 0:
+            n = n/2
+        else:
+            n = 3 * n + 1
+        count += 1
+    return count
+    
+def prob22():
+    """Using names.txt, a 46K text file containing over five-thousand first names, begin by sorting it into alphabetical order. Then working out the alphabetical value for each name, multiply this value by its alphabetical position in the list to obtain a name score.
+
+For example, when the list is sorted into alphabetical order, COLIN, which is worth 3 + 15 + 12 + 9 + 14 = 53, is the 938th name in the list. So, COLIN would obtain a score of 938  53 = 49714.
+
+What is the total of all the name scores in the file?
+    """
+    #Open the file containing the names
+    f = open('names.txt', 'r')
+    #Read in the file
+    src = f.readlines()
+    #The file is double quoted, comma separated values, so we split on comma.
+    names = src[0].split(',')
+    names.sort()
+    
+    total = 0
+    for i, name in enumerate(names):
+        subtotal = 0
+        for char in name:
+            if char.isalpha():
+                #ord gives the ordinal value of the character in its encoding (usually its ASCII value)
+                #a is 97, so subtract 96 to shift the values down
+                subtotal += ord(char.lower()) - 96
+        total += (i + 1) * subtotal
+    return total
+    
 if __name__ == "__main__":
     import sys
-    print prob11()     
+    print prob22()     
